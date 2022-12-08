@@ -32,8 +32,15 @@ public class Main {
     private static RetirarPersona vRetirarPersona;
 
     public static void main(String[] args) {
-        vLogin = new IniciarSesion();
-        vLogin.setVisible(true);
+        Persona persona = new Persona();
+        persona.setNombre("Juan");
+
+        XStream xStream = new XStream(new DomDriver());
+        xStream.registerConverter(new PersonConverter());
+        xStream.alias("person", Person.class);
+        System.out.println(xStream.toXML(person));
+//        vLogin = new IniciarSesion();
+//        vLogin.setVisible(true);
 //        vPrincipal = new VPrincipal();
 //        vPrincipal.setVisible(true);
     }
