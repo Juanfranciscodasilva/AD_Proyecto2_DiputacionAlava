@@ -1,14 +1,13 @@
 package diputacionAlava;
 
+import BBDD.BBDDConfig;
+import Converters.CampamentoConverter;
+import Converters.PersonaConverter;
 import BBDD.CampamentosBD;
 import BBDD.PersonasBD;
 import BBDD.PersonasCampamentosBD;
 import BBDD.UsuariosAplicacionBD;
-import Clases.Campamento;
-import Clases.CampamentoPersona;
-import Clases.Persona;
-import Clases.Response;
-import Clases.Usuario;
+import Clases.*;
 import Ventanas.CrearCampamento;
 import Ventanas.CrearPersona;
 import Ventanas.IniciarSesion;
@@ -17,7 +16,10 @@ import Ventanas.RegistrarUsuario;
 import Ventanas.RetirarPersona;
 import Ventanas.VPrincipal;
 import Ventanas.VerModificarEliminarCampamento;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 
@@ -31,14 +33,46 @@ public class Main {
     private static CrearPersona vCrearPersona;
     private static RetirarPersona vRetirarPersona;
 
-    public static void main(String[] args) {
-        Persona persona = new Persona();
-        persona.setNombre("Juan");
+    public static void main(String[] args) throws Exception {
+        try{
+            BBDDConfig.comprobarRecursosYBD();
+        }catch(Exception ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Ha ocurrido un error comprobando y registrando los XML base para la aplicación.","", JOptionPane.ERROR_MESSAGE);
+            System.exit(-1);
+        }
+//        Persona persona = new Persona();
+//        persona.setDni("58046446N");
+//        persona.setNombre("Juan");
+//        persona.setApellido1("da silva");
+//        persona.setApellido2("garcia");
+//        
+//        XStream xStream = Persona.generarXStreamPreparado();
+//        
+//        String a = xStream.toXML(persona);
+//        System.out.println(a);
+//        Persona perUnmarshall = (Persona)xStream.fromXML(a);
+//        
+//        Date fechaI = new Date();
+//        Date fechaF = new Date();
+//        fechaF.setTime(fechaI.getTime()+86400000);
+//        Campamento camp = new Campamento(1,"camp1", "monte gorbea", fechaI, fechaF, 15);
+//        camp.setPersona(persona);
+      
 
-        XStream xStream = new XStream(new DomDriver());
-        xStream.registerConverter(new PersonConverter());
-        xStream.alias("person", Person.class);
-        System.out.println(xStream.toXML(person));
+//        xStream = Campamento.generarXStreamPreparado();
+//        String b = xStream.toXML(camp);
+//        System.out.println(b);
+//        Campamento campUnmarshall = (Campamento)xStream.fromXML(b);
+//        System.out.println(b);
+
+//        Usuario usu = new Usuario("jfdasilva","12345Abcde");
+//        XStream xStream = Usuario.generarXStreamPreparado();
+//        
+//        String a = xStream.toXML(usu);
+//        Usuario usuMarshall = (Usuario)xStream.fromXML(a);
+//        System.out.println(a);
+
 //        vLogin = new IniciarSesion();
 //        vLogin.setVisible(true);
 //        vPrincipal = new VPrincipal();
@@ -66,10 +100,10 @@ public class Main {
     }
     
     public static void entrarALaAplicacion(){
-        vLogin.setVisible(false);
-        vLogin.dispose();
-        vPrincipal = new VPrincipal();
-        vPrincipal.setVisible(true);
+//        vLogin.setVisible(false);
+//        vLogin.dispose();
+//        vPrincipal = new VPrincipal();
+//        vPrincipal.setVisible(true);
     }
     
     public static void entrarACreacionDeCampamento(){

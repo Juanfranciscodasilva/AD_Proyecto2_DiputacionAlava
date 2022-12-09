@@ -1,23 +1,21 @@
 package Clases;
 
-import java.io.Serializable;
-import java.util.ArrayList;
+import Converters.PersonaConverter;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
-public class Persona implements Serializable {
+public class Persona {
  
     private int id;
     private String dni;
     private String nombre;
     private String apellido1;
     private String apellido2;
-    
-    ArrayList<Campamento> campamentos = new ArrayList();
 
-    public Persona() {
+    public Persona(){
     }
 
-    public Persona(int id, String dni, String nombre, String apellido1, String apellido2) {
-        this.id = id;
+    public Persona(String dni, String nombre, String apellido1, String apellido2) {
         this.dni = dni;
         this.nombre = nombre;
         this.apellido1 = apellido1;
@@ -69,13 +67,13 @@ public class Persona implements Serializable {
     public void setApellido2(String apellido2) {
         this.apellido2 = apellido2;
     }
-
-    public ArrayList<Campamento> getCampamentos() {
-        return campamentos;
-    }
-
-    public void setCampamentos(Campamento c) {
-        this.campamentos.add(c);
+    
+    public static XStream generarXStreamPreparado(){
+        XStream xStream = new XStream(new DomDriver());
+        xStream.registerConverter(new PersonaConverter());
+        xStream.alias("persona", Persona.class);
+        xStream.allowTypes(new Class[] {Persona.class});
+        return xStream;
     }
 
 }

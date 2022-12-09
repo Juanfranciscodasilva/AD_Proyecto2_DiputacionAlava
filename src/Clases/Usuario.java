@@ -1,10 +1,11 @@
 package Clases;
 
+import Converters.UsuarioConverter;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import java.io.Serializable;
 
 public class Usuario implements Serializable {
-    
-    public long id;
     
     public String usuario;
     
@@ -16,20 +17,6 @@ public class Usuario implements Serializable {
     public Usuario(String usuario, String password) {
         this.usuario = usuario;
         this.password = password;
-    }
-
-    public Usuario(long id, String usuario, String password) {
-        this.id = id;
-        this.usuario = usuario;
-        this.password = password;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getUsuario() {
@@ -46,6 +33,14 @@ public class Usuario implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public static XStream generarXStreamPreparado(){
+        XStream xStream = new XStream(new DomDriver());
+        xStream.registerConverter(new UsuarioConverter());
+        xStream.alias("usuario", Usuario.class);
+        xStream.allowTypes(new Class[] {Usuario.class});
+        return xStream;
     }
     
     

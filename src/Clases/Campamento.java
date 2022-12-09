@@ -1,10 +1,13 @@
 package Clases;
 
-import java.io.Serializable;
+import Converters.CampamentoConverter;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class Campamento implements Serializable {
+public class Campamento{
         
     public int id;
     public String nombre;
@@ -13,7 +16,7 @@ public class Campamento implements Serializable {
     public Date fechaF;
     public int capacidad;
     
-//    ArrayList<Persona> personas = new ArrayList();
+    List<Persona> personas = new ArrayList();
 
     public Campamento() {
     }
@@ -83,14 +86,24 @@ public class Campamento implements Serializable {
         this.capacidad = capacidad;
     }
 
-//    public ArrayList<Persona> getPersonas() {
-//        return personas;
-//    }
-//
-//    public void setPersonas(Persona p) {
-//        this.personas.add(p);
-//    }
+    public List<Persona> getPersonas() {
+        return personas;
+    }
     
+    public void setPersonas(List<Persona> p) {
+        this.personas = p;
+    }
+
+    public void setPersona(Persona p) {
+        this.personas.add(p);
+    }
     
+    public static XStream generarXStreamPreparado(){
+        XStream xStream = new XStream(new DomDriver());
+        xStream.registerConverter(new CampamentoConverter());
+        xStream.alias("campamento", Campamento.class);
+        xStream.allowTypes(new Class[] {Campamento.class});
+        return xStream;
+    }
     
 }

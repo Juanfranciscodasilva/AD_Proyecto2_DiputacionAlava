@@ -1,5 +1,6 @@
 package BBDD;
 
+import static BBDD.BBDDConfig.col;
 import Clases.Campamento;
 import Clases.Persona;
 import Clases.Response;
@@ -11,9 +12,41 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.xmldb.api.base.Resource;
+import org.xmldb.api.modules.XMLResource;
 
 public class PersonasBD {
     public static File bdPersonas = null;
+    
+    public static void comprobarXMLPrincipal() throws Exception{
+        try{
+            if (BBDDConfig.conectarBD() != null) {
+                if(col.getResource("personas.xml") == null){
+                    System.out.println("Se ha detectado que no está registrado el XML de personas.\nInsertando XML plantilla...");
+                    XMLResource res = null;
+                    res = (XMLResource)col.createResource("personas.xml", "XMLResource");
+                    File f = new File(".\\ficherosBase\\plantillaPersonas.xml");
+                    res.setContent(f);
+                    col.storeResource(res);
+                    col.close();
+                    System.out.println("Se ha registrado el XML de personas.");
+                }
+            } else {
+                System.out.println("Error en la conexión. Comprueba datos.");
+                throw new Exception("Error en la conexión. Comprueba datos.");
+            }
+        }catch(Exception ex){
+            throw ex;
+        }finally{
+            if(col != null){
+                try{
+                    col.close();
+                }catch(Exception ex){
+                    System.out.println("Error al cerrar la colección, es posible que ya estuviese cerrada.");
+                }
+            }
+        }
+    }
     
     public static Response registrarPersona(Persona per){
         Response respuesta = new Response();
