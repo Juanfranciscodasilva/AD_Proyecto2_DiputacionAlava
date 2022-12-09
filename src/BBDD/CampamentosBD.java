@@ -8,7 +8,6 @@ import com.thoughtworks.xstream.XStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.xmldb.api.base.Resource;
 import org.xmldb.api.base.ResourceIterator;
@@ -182,6 +181,27 @@ public class CampamentosBD {
         try{
             if (BBDDConfig.conectarBD() != null) {
                 return getListaCampamentosFromBD();
+            } else {
+                System.out.println("Error en la conexión. Comprueba datos.");
+                throw new Exception("Error en la conexión. Comprueba datos.");
+            }
+        }catch(Exception ex){
+            throw ex;
+        }finally{
+            if(col != null){
+                try{
+                    col.close();
+                }catch(Exception ex){
+                    System.out.println("Error al cerrar la colección, es posible que ya estuviese cerrada.");
+                }
+            }
+        }
+    }
+    
+    public static List<Campamento> getAllCampamentosWithAllDatosPersonas() throws Exception{
+        try{
+            if (BBDDConfig.conectarBD() != null) {
+                return getListaCampamentosWithAllDatosPersonasFromBD();
             } else {
                 System.out.println("Error en la conexión. Comprueba datos.");
                 throw new Exception("Error en la conexión. Comprueba datos.");
@@ -418,6 +438,43 @@ public class CampamentosBD {
                 Resource r = i.nextResource();
                 String campXML = (String) r.getContent();
                 Campamento camp = (Campamento)xStream.fromXML(campXML);
+                campamentos.add(camp);
+            }
+            col.close();
+            return campamentos;
+        }catch (XMLDBException e) {
+            System.out.println("Error al consultar el documento.");
+            e.printStackTrace();
+            throw e;
+        }
+        catch(Exception ex){
+            throw ex;
+        }
+    }
+    
+    private static List<Campamento> getListaCampamentosWithAllDatosPersonasFromBD() throws Exception{
+        try{
+            List<Campamento> campamentos = new ArrayList<>();
+            XPathQueryService servicio;
+            servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            StringBuilder query = new StringBuilder();
+            query.append("/campamentos/campamento");
+            ResourceSet result = servicio.query(query.toString());
+            ResourceIterator i;
+            i = result.getIterator();
+            XStream xStream = Campamento.generarXStreamPreparado();
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                String campXML = (String) r.getContent();
+                Campamento camp = (Campamento)xStream.fromXML(campXML);
+                List<Persona> personasCompletas = new ArrayList<>();
+                if(camp.getPersonas() != null){
+                    for(Persona per : camp.getPersonas()){
+                        Persona personaCompleta = PersonasBD.buscarPersonaByDni(per.getDni());
+                        personasCompletas.add(personaCompleta);
+                    }
+                }
+                camp.setPersonas(personasCompletas);
                 campamentos.add(camp);
             }
             col.close();

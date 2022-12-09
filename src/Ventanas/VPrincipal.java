@@ -247,7 +247,7 @@ public class VPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_VerInscripcionesActionPerformed
 
     private void VerListaPersonasEnCampamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VerListaPersonasEnCampamentoActionPerformed
-       // Main.AbrirGenteInscrita();
+       Main.abrirVerPersonasDeCampamento();
     }//GEN-LAST:event_VerListaPersonasEnCampamentoActionPerformed
 
     private void RegistrarPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrarPersonaActionPerformed

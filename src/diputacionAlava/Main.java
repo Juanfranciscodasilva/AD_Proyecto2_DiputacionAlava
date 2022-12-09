@@ -5,14 +5,7 @@ import BBDD.CampamentosBD;
 import BBDD.PersonasBD;
 import BBDD.UsuariosAplicacionBD;
 import Clases.*;
-import Ventanas.CrearCampamento;
-import Ventanas.CrearPersona;
-import Ventanas.IniciarSesion;
-import Ventanas.InscribirPersona;
-import Ventanas.RegistrarUsuario;
-import Ventanas.RetirarPersona;
-import Ventanas.VPrincipal;
-import Ventanas.VerModificarEliminarCampamento;
+import Ventanas.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -26,6 +19,7 @@ public class Main {
     private static InscribirPersona vInscribirPersona;
     private static CrearPersona vCrearPersona;
     private static RetirarPersona vRetirarPersona;
+    private static VerPersonasCampamento vVerPersonasCampamento;
 
     public static void main(String[] args) throws Exception {
         try{
@@ -166,6 +160,27 @@ public class Main {
     public static void cerrarVerModificarEliminarCamp(){
         vVerModificarEliminarCamp.setVisible(false);
         vVerModificarEliminarCamp.dispose();
+        vPrincipal = new VPrincipal();
+        vPrincipal.setVisible(true);
+    }
+    
+    public static void abrirVerPersonasDeCampamento(){
+        try{
+            List<Campamento> campamentos = CampamentosBD.getAllCampamentosWithAllDatosPersonas();
+            if(vPrincipal != null){
+                vPrincipal.setVisible(false);
+                vPrincipal.dispose();
+            }
+            vVerPersonasCampamento = new VerPersonasCampamento(campamentos);
+            vVerPersonasCampamento.setVisible(true);
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(null, "Ha ocurrido un error al abrir la ventana. Intentalo de nuevo.","",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public static void cerrarVerPersonasDeCampamento(){
+        vVerPersonasCampamento.setVisible(false);
+        vVerPersonasCampamento.dispose();
         vPrincipal = new VPrincipal();
         vPrincipal.setVisible(true);
     }

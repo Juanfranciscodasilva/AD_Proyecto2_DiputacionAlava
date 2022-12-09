@@ -1,19 +1,12 @@
 package BBDD;
 
 import static BBDD.BBDDConfig.col;
-import Clases.Campamento;
 import Clases.Persona;
 import Clases.Response;
-import Clases.Usuario;
 import com.thoughtworks.xstream.XStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.xmldb.api.base.Resource;
 import org.xmldb.api.base.ResourceIterator;
 import org.xmldb.api.base.ResourceSet;
@@ -114,7 +107,7 @@ public class PersonasBD {
         }
     }
     
-    private static Persona buscarPersonaByDni(String dni) throws Exception{
+    public static Persona buscarPersonaByDni(String dni) throws Exception{
         try{
             XPathQueryService servicio;
             servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");

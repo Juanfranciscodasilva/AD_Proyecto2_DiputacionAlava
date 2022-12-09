@@ -12,7 +12,6 @@ public class RegistrarUsuario extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         errorUsuario.setVisible(false);
         errorPass.setVisible(false);
-        //TO DO VALIDACIONES DE REGISTRO DE NUEVO USUARIO , POSIBLE IMPLEMENTAR DAR PERMISO ADMIN A OTRO USUARIO
     }
 
     @SuppressWarnings("unchecked")

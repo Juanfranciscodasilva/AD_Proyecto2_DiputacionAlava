@@ -59,6 +59,10 @@ public class Persona {
         this.apellido2 = apellido2;
     }
     
+    public String toString2(){
+        return "- "+dni+" - "+nombre+" "+apellido1+" "+apellido2;
+    }
+    
     public static XStream generarXStreamPreparado(){
         XStream xStream = new XStream(new DomDriver());
         xStream.registerConverter(new PersonaConverter());

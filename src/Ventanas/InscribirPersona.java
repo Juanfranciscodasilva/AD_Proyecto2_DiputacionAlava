@@ -6,7 +6,6 @@ import Clases.Response;
 import diputacionAlava.Main;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -14,7 +13,6 @@ import javax.swing.JOptionPane;
 public class InscribirPersona extends javax.swing.JFrame {
     Persona per = new Persona();
     Campamento camp;
-    DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private List<Campamento> listaCamp;
     private List<Persona> listaPer;
     
