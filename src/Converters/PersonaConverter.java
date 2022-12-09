@@ -17,7 +17,7 @@ public class PersonaConverter implements Converter {
         MarshallingContext context) {
         Persona persona = (Persona) objeto;
         writer.startNode("dni");
-        writer.setValue(persona.getDni());
+        writer.setValue(persona.getDni().toUpperCase());
         writer.endNode();
         writer.startNode("nombre");
         writer.setValue(persona.getNombre());
@@ -34,7 +34,7 @@ public class PersonaConverter implements Converter {
                     UnmarshallingContext context) {
             Persona persona = new Persona();
             reader.moveDown();
-            persona.setDni(reader.getValue());
+            persona.setDni(reader.getValue().toUpperCase());
             reader.moveUp();
             reader.moveDown();
             persona.setNombre(reader.getValue());

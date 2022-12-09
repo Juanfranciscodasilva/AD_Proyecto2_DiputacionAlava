@@ -1,11 +1,8 @@
 package diputacionAlava;
 
 import BBDD.BBDDConfig;
-import Converters.CampamentoConverter;
-import Converters.PersonaConverter;
 import BBDD.CampamentosBD;
 import BBDD.PersonasBD;
-import BBDD.PersonasCampamentosBD;
 import BBDD.UsuariosAplicacionBD;
 import Clases.*;
 import Ventanas.CrearCampamento;
@@ -16,10 +13,7 @@ import Ventanas.RegistrarUsuario;
 import Ventanas.RetirarPersona;
 import Ventanas.VPrincipal;
 import Ventanas.VerModificarEliminarCampamento;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 
@@ -41,42 +35,8 @@ public class Main {
             JOptionPane.showMessageDialog(null, "Ha ocurrido un error comprobando y registrando los XML base para la aplicación.","", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
-//        Persona persona = new Persona();
-//        persona.setDni("58046446N");
-//        persona.setNombre("Juan");
-//        persona.setApellido1("da silva");
-//        persona.setApellido2("garcia");
-//        
-//        XStream xStream = Persona.generarXStreamPreparado();
-//        
-//        String a = xStream.toXML(persona);
-//        System.out.println(a);
-//        Persona perUnmarshall = (Persona)xStream.fromXML(a);
-//        
-//        Date fechaI = new Date();
-//        Date fechaF = new Date();
-//        fechaF.setTime(fechaI.getTime()+86400000);
-//        Campamento camp = new Campamento(1,"camp1", "monte gorbea", fechaI, fechaF, 15);
-//        camp.setPersona(persona);
-      
-
-//        xStream = Campamento.generarXStreamPreparado();
-//        String b = xStream.toXML(camp);
-//        System.out.println(b);
-//        Campamento campUnmarshall = (Campamento)xStream.fromXML(b);
-//        System.out.println(b);
-
-//        Usuario usu = new Usuario("jfdasilva","12345Abcde");
-//        XStream xStream = Usuario.generarXStreamPreparado();
-//        
-//        String a = xStream.toXML(usu);
-//        Usuario usuMarshall = (Usuario)xStream.fromXML(a);
-//        System.out.println(a);
-
-//        vLogin = new IniciarSesion();
-//        vLogin.setVisible(true);
-//        vPrincipal = new VPrincipal();
-//        vPrincipal.setVisible(true);
+        vLogin = new IniciarSesion();
+        vLogin.setVisible(true);
     }
     
     public static void CerrarPrograma(){
@@ -100,10 +60,10 @@ public class Main {
     }
     
     public static void entrarALaAplicacion(){
-//        vLogin.setVisible(false);
-//        vLogin.dispose();
-//        vPrincipal = new VPrincipal();
-//        vPrincipal.setVisible(true);
+        vLogin.setVisible(false);
+        vLogin.dispose();
+        vPrincipal = new VPrincipal();
+        vPrincipal.setVisible(true);
     }
     
     public static void entrarACreacionDeCampamento(){
@@ -243,11 +203,11 @@ public class Main {
     }
     
     public static Response insertarInscripcion(Campamento camp, Persona per){
-        return PersonasCampamentosBD.registrarInscripcion(camp, per);
+        return CampamentosBD.registrarInscripcion(camp, per);
     }
     
     public static Response eliminarInscripcion(Persona per, Campamento camp){
-        return PersonasCampamentosBD.eliminarInscripcionByCampamentoIdAndPersonaId(camp.getId(), per.getId());
+        return CampamentosBD.retirarInscripcion(camp, per);
     }
     
     public static void hacerDisposeDeTodasLasVentanas(){
@@ -260,6 +220,21 @@ public class Main {
         if(vPrincipal != null){
             vPrincipal.dispose();
         }
+        if(vCrearModificarCampamento != null){
+            vCrearModificarCampamento.dispose();
+        }
+        if(vVerModificarEliminarCamp != null){
+            vVerModificarEliminarCamp.dispose();
+        }
+        if(vInscribirPersona != null){
+            vInscribirPersona.dispose();
+        }
+        if(vCrearPersona != null){
+            vCrearPersona.dispose();
+        }
+        if(vRetirarPersona != null){
+            vRetirarPersona.dispose();
+        }
     }
     
     public static Response EliminarCampamento(Campamento camp){
@@ -270,20 +245,11 @@ public class Main {
         return CampamentosBD.modificarCampamento(camp);
     }
     
-    public static List<Campamento> obtenerCampamentosByIdPersona(int idPersona){
-        List<CampamentoPersona> listaInscripciones = PersonasCampamentosBD.getAllByPersonaId(idPersona);
+    public static List<Campamento> obtenerCampamentosByIdPersona(String dniPersona){
         List<Campamento> campamentos = new ArrayList<>();
         try{
-            if(listaInscripciones != null){
-                for(CampamentoPersona ins : listaInscripciones){
-                    Campamento camp = new Campamento();
-                    camp.setId(ins.getIdCampamento());
-                    Campamento campBuscado = CampamentosBD.findCampamentoById(camp);
-                    if(campBuscado != null){
-                        campamentos.add(campBuscado);
-                    }
-                }
-            }else{
+            campamentos = CampamentosBD.getAllCampamentosFromPersona(dniPersona);
+            if(campamentos == null){
                 throw new Exception();
             }
         }catch(Exception ex){

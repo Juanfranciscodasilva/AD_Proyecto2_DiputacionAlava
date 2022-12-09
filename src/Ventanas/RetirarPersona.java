@@ -273,7 +273,7 @@ public class RetirarPersona extends javax.swing.JFrame {
                 try{
                     Main.eliminarInscripcion(this.peSeleccionada, this.campSeleccionado);
                     LimpiarCamposCampamento();
-                    this.campamentos = Main.obtenerCampamentosByIdPersona(this.peSeleccionada.getId());
+                    this.campamentos = Main.obtenerCampamentosByIdPersona(this.peSeleccionada.getDni());
                     rellenarComboCampamentos();
                 }catch(Exception e){
                     JOptionPane.showMessageDialog(null, "Ha ocurrido un error inesperado. Vuelve a intentarlo","",JOptionPane.ERROR_MESSAGE);
@@ -299,7 +299,7 @@ public class RetirarPersona extends javax.swing.JFrame {
         }else{
             this.peSeleccionada = pers;
             AutocompletarDatosPersona();
-            this.campamentos = Main.obtenerCampamentosByIdPersona(pers.getId());
+            this.campamentos = Main.obtenerCampamentosByIdPersona(pers.getDni());
             rellenarComboCampamentos();
         }
     }//GEN-LAST:event_cbDniActionPerformed

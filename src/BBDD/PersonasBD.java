@@ -4,6 +4,8 @@ import static BBDD.BBDDConfig.col;
 import Clases.Campamento;
 import Clases.Persona;
 import Clases.Response;
+import Clases.Usuario;
+import com.thoughtworks.xstream.XStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,7 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.xmldb.api.base.Resource;
+import org.xmldb.api.base.ResourceIterator;
+import org.xmldb.api.base.ResourceSet;
+import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
+import org.xmldb.api.modules.XPathQueryService;
 
 public class PersonasBD {
     public static File bdPersonas = null;
@@ -51,99 +57,131 @@ public class PersonasBD {
     public static Response registrarPersona(Persona per){
         Response respuesta = new Response();
         try{
-            instanciarFichero();
-            insertarPersona(per); 
+            if (BBDDConfig.conectarBD() != null) {
+                if(!existePersona(per)){
+                    insertarPersona(per);
+                }else{
+                    respuesta.setCorrecto(false);
+                    respuesta.setMensajeError("Ya hay una persona registrada con DNI: \""+per.getDni().toUpperCase()+"\"");
+                }
+            } else {
+                System.out.println("Error en la conexión. Comprueba datos.");
+                throw new Exception("Error en la conexión. Comprueba datos.");
+            }
         }catch(Exception ex){
-            System.out.println(ex.getMessage());
             respuesta.setCorrecto(false);
-            respuesta.setMensajeError("Ha ocurrido un error al registrar a la persona. Intentalo de nuevo.");
+            respuesta.setMensajeError("Ha ocurrido un error al registrar la persona. Intentalo de nuevo.");
             return respuesta;
+        }finally{
+            if(col != null){
+                try{
+                    col.close();
+                }catch(Exception ex){
+                    System.out.println("Error al cerrar la colección, es posible que ya estuviese cerrada.");
+                }
+            }
         }
         return respuesta;
     }
     
     public static List<Persona> getAllPersonas() throws Exception{
         try{
-            instanciarFichero();
-            return getListaPersonasFromBD();
+            if (BBDDConfig.conectarBD() != null) {
+                return getListaPersonasFromBD();
+            } else {
+                System.out.println("Error en la conexión. Comprueba datos.");
+                throw new Exception("Error en la conexión. Comprueba datos.");
+            }
         }catch(Exception ex){
             throw ex;
-        }
-    }
-    
-    private static void instanciarFichero() throws Exception{
-        try{
-            bdPersonas = new File("personas.dat");
-        }catch(Exception ex){
-            throw ex;
-        }
-    }
-    
-    public static Persona buscarPersonaByDni(String dni) throws Exception{
-        try{
-            FileInputStream input = new FileInputStream(bdPersonas);
-            ObjectInputStream objIS = new ObjectInputStream(input);
-            while(input.available() != 0){
-                Persona persona = (Persona)objIS.readObject();
-                if(persona.getDni().equalsIgnoreCase(dni)){
-                    return persona;
+        }finally{
+            if(col != null){
+                try{
+                    col.close();
+                }catch(Exception ex){
+                    System.out.println("Error al cerrar la colección, es posible que ya estuviese cerrada.");
                 }
             }
-            return null;
+        }
+    }
+    
+    public static boolean existePersona(Persona per) throws Exception{
+        try{
+            Persona busqueda = buscarPersonaByDni(per.getDni());
+            return busqueda != null;
         }catch(Exception ex){
+            throw ex;
+        }
+    }
+    
+    private static Persona buscarPersonaByDni(String dni) throws Exception{
+        try{
+            XPathQueryService servicio;
+            servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            StringBuilder query = new StringBuilder();
+            query.append("for $p in /personas/persona ");
+            query.append("where $p/dni=\"").append(dni.toUpperCase()).append("\" ");
+            query.append("return $p ");
+            ResourceSet result = servicio.query(query.toString());
+            ResourceIterator i;
+            i = result.getIterator();
+            XStream xStream = Persona.generarXStreamPreparado();
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                String usuXML = (String) r.getContent();
+                Persona persona = (Persona)xStream.fromXML(usuXML);
+                return persona;
+            }
+            col.close();
             return null;
+        }catch (XMLDBException e) {
+            System.out.println("Error al consultar el documento.");
+            e.printStackTrace();
+            throw e;
+        }
+        catch(Exception ex){
+            throw ex;
         }
     }
     
     private static void insertarPersona(Persona per) throws Exception{
         try {
-            List<Persona> personas = getListaPersonasFromBD();
-            per.setId(generarIdFromList(personas));
-            personas.add(per);
-            insertarListaPersonas(personas);
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            XStream xStream = Persona.generarXStreamPreparado();
+            String perXML = xStream.toXML(per);
+            ResourceSet result = servicio.query("update insert " + perXML + " into /personas");
+            col.close();
         } catch (Exception e) {
+            System.out.println("Error al registrar la persona.");
             throw e;
         }
-    }
-    
-    private static void insertarListaPersonas(List<Persona> personas) throws Exception{
-        try {
-            FileOutputStream fileout = new FileOutputStream(bdPersonas);
-            ObjectOutputStream objOS = new ObjectOutputStream(fileout);
-            for(Persona p : personas){
-                objOS.writeObject(p);
-            }
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-    
-    private static int generarIdFromList(List<Persona> personas){
-        int id = 0;
-        if(personas == null || personas.isEmpty()){
-            return 0;
-        }
-        for(Persona p : personas){
-            if(p.getId() > id){
-                id = p.getId();
-            }
-        }
-        return id+1;
     }
     
     private static List<Persona> getListaPersonasFromBD() throws Exception{
         try{
             List<Persona> personas = new ArrayList<>();
-            if(bdPersonas.exists()){
-                FileInputStream input = new FileInputStream(bdPersonas);
-                ObjectInputStream objIS = new ObjectInputStream(input);
-                while(input.available() != 0){
-                    Persona camp = (Persona)objIS.readObject();
-                    personas.add(camp);
-                }
+            XPathQueryService servicio;
+            servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            StringBuilder query = new StringBuilder();
+            query.append("/personas/persona");
+            ResourceSet result = servicio.query(query.toString());
+            ResourceIterator i;
+            i = result.getIterator();
+            XStream xStream = Persona.generarXStreamPreparado();
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                String usuXML = (String) r.getContent();
+                Persona persona = (Persona)xStream.fromXML(usuXML);
+                personas.add(persona);
             }
+            col.close();
             return personas;
-        }catch(Exception ex){
+        }catch (XMLDBException e) {
+            System.out.println("Error al consultar el documento.");
+            e.printStackTrace();
+            throw e;
+        }
+        catch(Exception ex){
             throw ex;
         }
     }

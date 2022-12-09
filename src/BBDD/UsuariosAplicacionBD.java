@@ -65,6 +65,7 @@ public class UsuariosAplicacionBD {
                 }
             } else {
                 System.out.println("Error en la conexión. Comprueba datos.");
+                throw new Exception("Error en la conexión. Comprueba datos.");
             }
         }catch(Exception ex){
             respuesta.setCorrecto(false);
@@ -94,6 +95,7 @@ public class UsuariosAplicacionBD {
                 }
             } else {
                 System.out.println("Error en la conexión. Comprueba datos.");
+                throw new Exception("Error en la conexión. Comprueba datos.");
             }
         }catch(Exception ex){
             respuesta.setCorrecto(false);
@@ -190,7 +192,7 @@ public class UsuariosAplicacionBD {
             col.close();
         } catch (Exception e) {
             System.out.println("Error al registrar el usuario.");
-            e.printStackTrace();
+            throw e;
         }
     }
     

@@ -45,7 +45,7 @@ public class CampamentoConverter implements Converter {
         if(campamento.getPersonas() != null){
             for(Persona per : campamento.getPersonas()){
                 writer.startNode("persona");
-                writer.addAttribute("dni", per.getDni());
+                writer.addAttribute("dni", per.getDni().toUpperCase());
                 writer.endNode();
             }
         }
@@ -81,7 +81,7 @@ public class CampamentoConverter implements Converter {
                 reader.moveDown();
                 String dni = reader.getAttribute("dni");
                 Persona per = new Persona();
-                per.setDni(dni);
+                per.setDni(dni.toUpperCase());
                 camp.setPersona(per);
             }
             reader.moveUp();
