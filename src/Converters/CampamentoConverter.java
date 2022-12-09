@@ -78,11 +78,14 @@ public class CampamentoConverter implements Converter {
             reader.moveUp();
             reader.moveDown();
             while(reader.hasMoreChildren()){
+                System.out.println(reader.getValue());
                 reader.moveDown();
+                System.out.println(reader.getValue());
                 String dni = reader.getAttribute("dni");
                 Persona per = new Persona();
                 per.setDni(dni.toUpperCase());
                 camp.setPersona(per);
+                reader.moveUp();
             }
             reader.moveUp();
             return camp;

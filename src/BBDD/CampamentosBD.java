@@ -80,7 +80,7 @@ public class CampamentosBD {
         Response respuesta = new Response();
         try{
             if (BBDDConfig.conectarBD() != null) {
-                insertarInscripcionCampamento(camp,per);
+                respuesta = insertarInscripcionCampamento(camp,per);
             } else {
                 System.out.println("Error en la conexión. Comprueba datos.");
                 throw new Exception("Error en la conexión. Comprueba datos.");
@@ -105,7 +105,7 @@ public class CampamentosBD {
         Response respuesta = new Response();
         try{
             if (BBDDConfig.conectarBD() != null) {
-                retirarInscripcionCampamento(camp,per);
+                respuesta = retirarInscripcionCampamento(camp,per);
             } else {
                 System.out.println("Error en la conexión. Comprueba datos.");
                 throw new Exception("Error en la conexión. Comprueba datos.");
@@ -238,15 +238,25 @@ public class CampamentosBD {
         try {
             Campamento campBusqueda = getCampamentoById(camp.getId());
             if(campBusqueda != null){
-                if(campBusqueda.getPersonas() != null && campBusqueda.getPersonas().size() >= camp.getCapacidad()){
+                if(campBusqueda.getPersonas() != null && campBusqueda.getPersonas().size() >= campBusqueda.getCapacidad()){
                     respuesta.setCorrecto(false);
                     respuesta.setMensajeError("El campamento ha llegado al número máximo de personas inscritas");
                     return respuesta;
                 }
                 if(PersonasBD.existePersona(per)){
-                    deleteCampamento(camp);
-                    camp.getPersonas().add(per);
-                    insertarCampamento(camp);
+                    Persona inscripcionExistente = campBusqueda.getPersonas().stream()
+                            .filter(p -> p.getDni().equalsIgnoreCase(per.getDni()))
+                            .findFirst()
+                            .orElse(null);
+                    if(inscripcionExistente == null){
+                        deleteCampamento(camp);
+                        camp.getPersonas().add(per);
+                        insertarCampamento(camp);
+                    }else{
+                        System.out.println("La persona ya está inscrita en este campamento");
+                        respuesta.setCorrecto(false);
+                        respuesta.setMensajeError("La persona ya está inscrita en este campamento");
+                    }
                 }else{
                     System.out.println("No se ha encontrado la persona que se quiere inscribir al campamento");
                     respuesta.setCorrecto(false);
