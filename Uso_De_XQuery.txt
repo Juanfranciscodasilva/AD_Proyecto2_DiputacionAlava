@@ -1,0 +1,72 @@
+XQUERY QUE HAY DENTRO DE LA APLICACIÓN
+
+----------------------------------------------------------------------------
+-USUARIOS
+
+--Listar todos los usuarios
+
+/usuarios/usuario
+
+--Buscar solo por usuario
+for $u in /usuarios/usuario
+where $u/usu = "aqui_va_el_usuario"
+return $u
+
+--Buscar por usuario y password
+
+for $u in /usuarios/usuario
+where $u/usu = "aqui_va_el_usuario" and $u/pass = "aqui_va_la_contraseña"
+return $u
+
+--Insertar usuario
+
+update insert aqui_va_el_xml_usuario into /usuarios
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+-PERSONAS
+
+--Listar todas las personas
+
+/personas/persona
+
+--Buscar persona por DNI
+
+for $p in /personas/persona
+where $p/dni="aqui_va_el_dni"
+return $p
+
+--Insertar persona
+
+update insert aqui_va_el_xml_persona into /personas
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+-CAMPAMENTOS
+
+--Listar todos los campamentos
+
+/campamentos/campamento
+
+--Buscar campamento por ID
+
+for $c in /campamentos/campamento
+where $c/id = aqui_va_el_id_del_campamento
+return $c
+
+--Buscar el mayor ID de campamento
+
+/campamentos/campamento[id = max(id)]/id/text()
+
+--Buscar campamentos que contengan a una persona con DNI concreto
+
+/campamentos/campamento[personas/persona/@dni = "aqui_va_el_dni"]
+
+--Insertar campamento
+
+update insert aqui_va_el_xml_campamento into /campamentos
+
+--Eliminar campamento
+
+update delete /campamentos/campamento[id = "aqui_va_el_id_del_campamento"]
+----------------------------------------------------------------------------
