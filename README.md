@@ -5,12 +5,14 @@ Esta aplicación está pensada para realizar una tarea de gestión interna de ca
 
 La funcionalidad de la aplicación se basará en la gestión de los diferentes campamentos registrados y de las inscripciones de las personas que soliciten entrar en los mismos.
 
+(Esto es una adaptación de la versión anterior del proyecto hecha con métodos de almacenamiento distintos, a través de objetos serializables y archivos .dat).
+
 #  Índice de Contenidos 
 * [Información técnica](#información-técnica)
     * [Requerimientos](#requerimientos)
     * [Almacenamiento](#almacenamiento)
     * [A tener en cuenta](#a-tener-en-cuenta)
-* [Estructura](#estructura)
+* [Aplicación](#aplicación)
     * [Login](#login)
     * [Registro](#registro)
     * [Ventana principal](#ventana-principal)
@@ -24,8 +26,6 @@ La funcionalidad de la aplicación se basará en la gestión de los diferentes c
             * [Crear persona](#crear-persona)
             * [Inscribir persona](#inscribir-persona)
             * [Retirar persona](#retirar-persona)
-            * [Exportar XML personas????](#exportar-xml-personas)
-            * [Inscribir XML personas????](#inscribir-xml-personas)
             * [Ver campamentos inscritos](#ver-campamentos-inscritos)
         * [Pestaña salir](#pestaña-salir)
             * [Cerrar sesión](#cerrar-sesión)
@@ -38,20 +38,32 @@ La funcionalidad de la aplicación se basará en la gestión de los diferentes c
 
 * JDK 18
 * JCalendar-1.14.jar
+* _xmlrpc-server-3.1.1.jar
+* exist.jar
+* log4j-1.2.15.jar
+* ws-commons-util-1.0.2.jar
+* xml-apis-1.3.04.jar
+* xmldb.jar
+* xmlrpc-client-3.1.1.jar
+* xmlrpc-common-3.1.1.jar
+* xstream-1.4.19.jar
+
+Todas las librerías necesarias se encuentran en el directorio "libs" del repositorio.
 
 ## Almacenamiento
 
-Se lleva a cabo en ficheros .dat en los cuales se hará la escritura directa de los objetos serializables.
-* campamentos.dat
-* personas.dat
-* campamentoPersona.dat
-* usuarios.dat
+Se lleva a cabo en ficheros XML registrados con eXist DB.
+* usuarios.xml
+* campamentos.xml
+* personas.xml
 
 ## A tener en cuenta
-Las vistas están hechas basadas en JFrame desde Netbeans, es posible que para visualizar de manera acertada su diseñador se necesite dicho IDE.
+* Las vistas están hechas basadas en JFrame desde Netbeans, es posible que para visualizar de manera acertada su diseñador se necesite dicho IDE.
+* Los datos de conexión con eXist se encuentran en variables estáticas en el fichero "BBDDConfig.java".
+* Los XML no hará falta registrarlos en eXist de manera manual, la aplicación se encarga de registrarlos automaticamente en caso de no existir. Por otra parte, hay 3 ficheros plantilla en el directorio "ficherosBase" del repositorio por si se deseasen registrar de otra manera.
 
 ---
-# Estructura
+# Aplicación
 ---
 
 ## Login
@@ -161,14 +173,6 @@ El primero será el de la persona. Consta de un desplegable para seleccionar la 
 Para poder realizar el proceso de retirar la inscripción será obligatorio tener una persona y un campamento seleccionado.
 
 ![retirar-persona](https://drive.google.com/uc?export=view&id=1PZt8DtgKumoFxQcke8BXAMJAk_Muq_0N)
-
-### Exportar XML personas
-
-TODO
-
-### Inscribir XML personas
-
-TODO
 
 ### Ver Campamentos Inscritos
 Esta ventana, como la de [retirar persona](#retirar-persona), está conformada por 2 bloques de datos.
